@@ -1,4 +1,19 @@
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 class Config:
-    SECRET_KEY = "basakwallsecretkey"
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:1982Zort@localhost/basakwall_db"
+
+    SECRET_KEY = os.getenv("SECRET_KEY")
+
+    SQLALCHEMY_DATABASE_URI = (
+        f"postgresql://{os.getenv('DB_USER')}:"
+        f"{os.getenv('DB_PASSWORD')}@"
+        f"{os.getenv('DB_HOST')}/"
+        f"{os.getenv('DB_NAME')}"
+    )
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False

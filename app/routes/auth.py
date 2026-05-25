@@ -1,5 +1,14 @@
-from flask import request
-from werkzeug.security import generate_password_hash
+from flask import (
+    request,
+    session,
+    render_template,
+    redirect
+)
+
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash
+)
 
 from database import db
 from app.models.user import User
@@ -33,4 +42,52 @@ def register_routes(app):
         db.session.add(new_user)
         db.session.commit()
 
-        return "User created successfully", 201
+        return redirect("/")
+
+
+    @app.route("/login", methods=["POST"])
+    def login():
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if not username or not password:
+            return "Missing credentials", 400
+
+        user = User.query.filter_by(
+            username=username
+        ).first()
+
+        if not user:
+            return "Invalid username or password", 401
+
+        if not check_password_hash(
+            user.password_hash,
+            password
+        ):
+            return "Invalid username or password", 401
+
+        session["user_id"] = user.id
+        session["username"] = user.username
+
+        return redirect("/profile")
+
+
+    @app.route("/logout")
+    def logout():
+
+        session.clear()
+
+        return redirect("/")
+
+
+    @app.route("/profile")
+    def profile():
+
+        if "user_id" not in session:
+            return "Unauthorized", 401
+
+        return render_template(
+            "profile.html",
+            username=session["username"]
+        )

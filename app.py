@@ -1,8 +1,12 @@
-from flask import Flask
+from flask import Flask, render_template
 from config import Config
 from database import db
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder="app/templates",
+    static_folder="app/static"
+)
 
 app.config.from_object(Config)
 
@@ -17,7 +21,8 @@ with app.app_context():
 
 @app.route("/")
 def home():
-    return "BasakWall is running."
+
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(

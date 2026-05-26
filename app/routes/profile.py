@@ -1,5 +1,6 @@
 from flask import render_template, session
 from app.models.user import User
+from app.models.follow import Follow
 
 
 def register_profile_routes(app):
@@ -14,10 +15,20 @@ def register_profile_routes(app):
         if not user:
             return "User not found"
 
+        follower_count = Follow.query.filter_by(
+            following_id=user.id
+        ).count()
+
+        following_count = Follow.query.filter_by(
+            follower_id=user.id
+        ).count()
+
         print(session)
 
         return render_template(
             "profile.html",
             user=user,
-            current_user=session["username"]
+            current_user=session["username"],
+            follower_count=follower_count,
+            following_count=following_count
         )

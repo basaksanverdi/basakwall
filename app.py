@@ -12,8 +12,10 @@ app.config.from_object(Config)
 
 db.init_app(app)
 from app.routes.auth import register_routes
+from app.routes.profile import register_profile_routes
 
 register_routes(app)
+register_profile_routes(app)
 
 with app.app_context():
     from app.models.user import User

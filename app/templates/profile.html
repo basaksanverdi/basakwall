@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html>
+
+{% if current_user == user.username %}
+    <a href="/logout">Logout</a>
+{% endif %}
+
 <head>
-    <title>Profile</title>
+    <title>{{ user.username }} Profile</title>
 </head>
+
 <body>
 
-    <h1>Welcome {{ username }}</h1>
+    <h1>@{{ user.username }}</h1>
 
-    <a href="/logout">
-        Logout
-    </a>
+    <img
+        src="{{ url_for('static',
+        filename='profile_pictures/' + user.profile_picture) }}"
+        width="150"
+    >
+
+    <p>
+        Joined:
+        {{ user.created_at }}
+    </p>
+
+    <br>
 
 </body>
+
 </html>

@@ -69,8 +69,9 @@ def register_routes(app):
 
         session["user_id"] = user.id
         session["username"] = user.username
+        print("session:", session)
 
-        return redirect("/profile")
+        return redirect(f"/profile/{user.username}")
 
 
     @app.route("/logout")
@@ -79,15 +80,3 @@ def register_routes(app):
         session.clear()
 
         return redirect("/")
-
-
-    @app.route("/profile")
-    def profile():
-
-        if "user_id" not in session:
-            return "Unauthorized", 401
-
-        return render_template(
-            "profile.html",
-            username=session["username"]
-        )

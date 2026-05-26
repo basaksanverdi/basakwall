@@ -23,6 +23,11 @@ def register_profile_routes(app):
             follower_id=user.id
         ).count()
 
+        is_following = Follow.query.filter_by(
+            follower_id=session["user_id"],
+            following_id=user.id
+        ).first() is not None
+
         print(session)
 
         return render_template(
@@ -30,5 +35,6 @@ def register_profile_routes(app):
             user=user,
             current_user=session["username"],
             follower_count=follower_count,
-            following_count=following_count
+            following_count=following_count,
+            is_following=is_following
         )

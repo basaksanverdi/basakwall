@@ -15,9 +15,19 @@
 
     {% else %}
 
-        <a href="/follow/{{ user.username }}">
-            Follow
-        </a>
+        {% if is_following %}
+
+            <a href="/unfollow/{{ user.username }}">
+                Unfollow
+            </a>
+
+        {% else %}
+
+            <a href="/follow/{{ user.username }}">
+                Follow
+            </a>
+
+        {% endif %}
 
     {% endif %}
 

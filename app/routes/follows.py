@@ -36,3 +36,29 @@ def register_follow_routes(app):
         db.session.commit()
 
         return redirect(f"/profile/{username}")
+
+
+    @app.route("/unfollow/<username>")
+    def unfollow_user(username):
+
+        if "user_id" not in session:
+            return "Unauthorized", 401
+
+        user_to_unfollow = User.query.filter_by(
+            username=username
+        ).first()
+
+        if not user_to_unfollow:
+            return "User not found"
+
+        follow = Follow.query.filter_by(
+            follower_id=session["user_id"],
+            following_id=user_to_unfollow.id
+        ).first()
+
+        if follow:
+
+            db.session.delete(follow)
+            db.session.commit()
+
+        return redirect(f"/profile/{username}")

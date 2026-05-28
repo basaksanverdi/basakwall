@@ -54,6 +54,64 @@
         {{ user.created_at }}
     </p>
 
+    {% if is_owner %}
+
+    <hr>
+
+    <h2>Create Post</h2>
+
+    <form action="/posts" method="POST">
+
+        <textarea
+            name="content"
+            placeholder="What's happening?"
+            rows="5"
+            cols="50"
+            required
+        ></textarea>
+
+        <br><br>
+
+        <button type="submit">
+            Post
+        </button>
+
+    </form>
+
+    {% endif %}
+
+    <hr>
+
+    <h2>Posts</h2>
+
+    {% for post in posts %}
+
+        <div>
+
+            <p>
+                {{ post.content }}
+            </p>
+
+            <small>
+                {{ post.created_at }}
+            </small>
+
+            {% if post.user_id == session["user_id"] %}
+
+                <br><br>
+
+                <a href="/delete_post/{{ post.id }}">
+                    Delete
+                </a>
+
+            {% endif %}
+
+        </div>
+
+        <hr>
+
+    {% endfor %}
+
 </body>
 
 </html>

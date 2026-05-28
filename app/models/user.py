@@ -27,6 +27,12 @@ class User(db.Model):
         default="default.png"
     )
 
+    posts = db.relationship(
+    "Post",
+    backref="author",
+    lazy=True
+    )
+
     created_at = db.Column(
         db.DateTime,
         default=datetime.now

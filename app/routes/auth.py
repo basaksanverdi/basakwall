@@ -71,7 +71,8 @@ def register_routes(app):
         session["username"] = user.username
         print("session:", session)
 
-        return redirect(f"/profile/{user.username}")
+        # return redirect(f"/profile/{user.username}")
+        return redirect("/feed")
 
 
     @app.route("/logout")

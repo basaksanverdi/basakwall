@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Feed</title>
+</head>
+
+<body>
+
+    <div>
+
+        <h1>
+            Your Feed
+        </h1>
+
+        <a href="/profile/{{ current_user.username }}">
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='profile_pictures/' + current_user.profile_picture
+                ) }}"
+                width="100"
+            >
+
+            <br><br>
+
+            @{{ current_user.username }}
+
+        </a>
+
+        <br><br>
+
+        <a href="/logout">
+            Logout
+        </a>
+
+    </div>
+
+    <hr>
+
+    <form action="/posts" method="POST">
+
+        <textarea
+            name="content"
+            placeholder="What's happening?"
+            rows="5"
+            cols="50"
+            required
+        ></textarea>
+
+        <br><br>
+
+        <button type="submit">
+            Post
+        </button>
+
+    </form>
+
+    <hr>
+
+    {% for post in posts %}
+
+        <div>
+
+            <a href="/profile/{{ post.author.username }}">
+                @{{ post.author.username }}
+            </a>
+
+            <br><br>
+
+            <a href="/posts/{{ post.id }}">
+
+                {{ post.content }}
+
+            </a>
+
+            <br><br>
+
+            <small>
+                {{ post.created_at }}
+            </small>
+
+                {% if post.user_id == session["user_id"] %}
+
+                 <br><br>
+
+                <a href="/delete_post/{{ post.id }}">
+                    Delete
+                </a>
+
+                 {% endif %}
+
+        </div>
+
+        <hr>
+
+    {% endfor %}
+
+</body>
+
+</html>

@@ -2,6 +2,7 @@ from flask import render_template, session
 from app.models.user import User
 from app.models.follow import Follow
 from app.models.post import Post
+from sqlalchemy.orm import joinedload
 
 
 def register_profile_routes(app):
@@ -50,4 +51,48 @@ def register_profile_routes(app):
             is_following=is_following,
             posts=posts,
             is_owner=is_owner
+        )
+
+    @app.route("/profile/<username>/followers")
+    def followers(username):
+
+        user = User.query.filter_by(
+            username=username
+        ).first()
+
+        if not user:
+            return "User not found"
+
+        followers = Follow.query.options(
+            joinedload(Follow.follower)
+        ).filter_by(
+            following_id=user.id
+        ).all()
+
+        return render_template(
+            "followers.html",
+            user=user,
+            followers=followers
+        )
+
+    @app.route("/profile/<username>/following")
+    def following(username):
+
+        user = User.query.filter_by(
+            username=username
+        ).first()
+
+        if not user:
+            return "User not found"
+
+        following = Follow.query.options(
+            joinedload(Follow.following)
+        ).filter_by(
+            follower_id=user.id
+        ).all()
+
+        return render_template(
+            "following.html",
+            user=user,
+            following=following
         )

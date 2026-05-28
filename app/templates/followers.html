@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Followers</title>
+</head>
+
+<body>
+
+    <h1>
+        Followers of @{{ user.username }}
+    </h1>
+
+    <hr>
+
+    {% for follow in followers %}
+
+        <div>
+
+            <a href="/profile/{{ follow.follower.username }}">
+
+                @{{ follow.follower.username }}
+
+            </a>
+
+        </div>
+
+        <hr>
+
+    {% endfor %}
+
+</body>
+
+</html>

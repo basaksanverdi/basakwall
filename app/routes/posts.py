@@ -1,4 +1,4 @@
-from flask import request, redirect, session
+from flask import request, redirect, session, render_template
 from app.models.post import Post
 from database import db
 
@@ -44,3 +44,16 @@ def register_post_routes(app):
         db.session.commit()
 
         return redirect(request.referrer)
+
+    @app.route("/posts/<int:post_id>")
+    def view_post(post_id):
+
+        post = Post.query.get(post_id)
+
+        if not post:
+            return "Post not found"
+
+        return render_template(
+            "post.html",
+            post=post
+        )

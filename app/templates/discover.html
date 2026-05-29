@@ -70,18 +70,11 @@
                         <b>{{ user.username }}</b>
                     </a>
 
-                    <br>
+                    <br><br>
 
-                    <form
-                        action="/follow/{{ user.id }}"
-                        method="POST"
-                    >
-
-                        <button type="submit">
-                            Follow
-                        </button>
-
-                    </form>
+                    <a href="/follow/{{ user.username }}">
+                        Follow
+                    </a>
 
                 </div>
 

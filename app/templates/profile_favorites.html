@@ -60,8 +60,21 @@
 
                 <br><br>
 
-                Favorites:
-                {{ favorite.post.favorites|length }}
+                {% if favorite.post.favorites|length > 0 %}
+
+                    <a href="/post/{{ favorite.post.id }}/favorites">
+
+                        Favorites:
+                        {{ favorite.post.favorites|length }}
+
+                    </a>
+
+                {% else %}
+
+                    Favorites:
+                    0
+
+                {% endif %}
 
                 <br><br>
 

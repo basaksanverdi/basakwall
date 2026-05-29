@@ -1,4 +1,4 @@
-from flask import session, redirect
+from flask import session, redirect, request
 from app.models.follow import Follow
 from app.models.user import User
 from database import db
@@ -25,7 +25,7 @@ def register_follow_routes(app):
         ).first()
 
         if existing_follow:
-            return redirect(f"/profile/{username}")
+            return redirect(request.referrer)
 
         follow = Follow(
             follower_id=session["user_id"],
@@ -35,7 +35,7 @@ def register_follow_routes(app):
         db.session.add(follow)
         db.session.commit()
 
-        return redirect(f"/profile/{username}")
+        return redirect(request.referrer)
 
 
     @app.route("/unfollow/<username>")
@@ -61,4 +61,4 @@ def register_follow_routes(app):
             db.session.delete(follow)
             db.session.commit()
 
-        return redirect(f"/profile/{username}")
+        return redirect(request.referrer)

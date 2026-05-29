@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Discover</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .discover-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .discover-users {
+            width: 30%;
+        }
+
+        .discover-posts {
+            width: 70%;
+        }
+
+        .user-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .post-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Discover</h1>
+
+    <a href="/feed">
+        Back to Feed
+    </a>
+
+    <hr>
+
+    <div class="discover-container">
+
+        <div class="discover-users">
+
+            <h2>Users</h2>
+
+            {% for user in discover_users %}
+
+                <div class="user-card">
+
+                    <a href="/profile/{{ user.username }}">
+                        <b>{{ user.username }}</b>
+                    </a>
+
+                    <br>
+
+                    <form
+                        action="/follow/{{ user.id }}"
+                        method="POST"
+                    >
+
+                        <button type="submit">
+                            Follow
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="discover-posts">
+
+            <h2>Posts</h2>
+
+            {% for post in discover_posts %}
+
+                <div class="post-card">
+
+                    <a href="/profile/{{ post.author.username }}">
+                        <b>{{ post.author.username }}</b>
+                    </a>
+
+                    <p>
+                        {{ post.content }}
+                    </p>
+
+                    <small>
+                        {{ post.created_at }}
+                    </small>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

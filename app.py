@@ -17,12 +17,14 @@ from app.routes.profile import register_profile_routes
 from app.routes.follows import register_follow_routes
 from app.routes.posts import register_post_routes
 from app.routes.feed import register_feed_routes
+from app.routes.discover import register_discover_routes
 
 register_routes(app)
 register_profile_routes(app)
 register_follow_routes(app)
 register_post_routes(app)
 register_feed_routes(app)
+register_discover_routes(app)
 
 with app.app_context():
 

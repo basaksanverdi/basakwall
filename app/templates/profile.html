@@ -2,131 +2,211 @@
 <html>
 
 <head>
+
     <title>{{ user.username }} Profile</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .profile-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .profile-sidebar {
+            width: 25%;
+        }
+
+        .profile-content {
+            width: 75%;
+        }
+
+        .profile-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .post-form {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .post-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+        }
+
+        button {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        img {
+            border-radius: 50%;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-    {% if current_user == user.username %}
-
-        <a href="/logout">
-            Logout
-        </a>
-
-    {% else %}
-
-        {% if is_following %}
-
-            <a href="/unfollow/{{ user.username }}">
-                Unfollow
-            </a>
-
-        {% else %}
-
-            <a href="/follow/{{ user.username }}">
-                Follow
-            </a>
-
-        {% endif %}
-
-    {% endif %}
-
     <h1>@{{ user.username }}</h1>
 
-    <img
-        src="{{ url_for(
-            'static',
-            filename='profile_pictures/' + user.profile_picture
-        ) }}"
-        width="150"
-    >
-
-    <p>
-
-    <a href="/profile/{{ user.username }}/followers">
-
-        Followers: {{ follower_count }}
-
+    <a href="/feed">
+        Back to Feed
     </a>
+    
+    <br><br>
 
-    </p>
+    <div class="profile-container">
 
-    <p>
+        <div class="profile-sidebar">
 
-    <a href="/profile/{{ user.username }}/following">
+            <div class="profile-card">
 
-        Following: {{ following_count }}
-
-    </a>
-
-    </p>
-
-    <p>
-        Joined:
-        {{ user.created_at }}
-    </p>
-
-    {% if is_owner %}
-
-    <hr>
-
-    <h2>Create Post</h2>
-
-    <form action="/posts" method="POST">
-
-        <textarea
-            name="content"
-            placeholder="What's happening?"
-            rows="5"
-            cols="50"
-            required
-        ></textarea>
-
-        <br><br>
-
-        <button type="submit">
-            Post
-        </button>
-
-    </form>
-
-    {% endif %}
-
-    <hr>
-
-    <h2>Posts</h2>
-
-    {% for post in posts %}
-
-        <div>
-
-            <a href="/posts/{{ post.id }}">
-
-                 <p>
-                {{ post.content }}
-                 </p>
-
-            </a>
-
-            <small>
-                {{ post.created_at }}
-            </small>
-
-            {% if post.user_id == session["user_id"] %}
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='profile_pictures/' + user.profile_picture
+                    ) }}"
+                    width="150"
+                >
 
                 <br><br>
 
-                <a href="/delete_post/{{ post.id }}">
-                    Delete
+                <b>
+                    @{{ user.username }}
+                </b>
+
+                <br><br>
+
+                <a href="/profile/{{ user.username }}/followers">
+
+                    Followers: {{ follower_count }}
+
                 </a>
 
-            {% endif %}
+                <br><br>
+
+                <a href="/profile/{{ user.username }}/following">
+
+                    Following: {{ following_count }}
+
+                </a>
+
+                <br><br>
+
+                <small>
+                    Joined:
+                    {{ user.created_at }}
+                </small>
+
+                <br><br>
+
+                {% if current_user == user.username %}
+
+                    <a href="/logout">
+                        Logout
+                    </a>
+
+                {% else %}
+
+                    {% if is_following %}
+
+                        <a href="/unfollow/{{ user.username }}">
+                            Unfollow
+                        </a>
+
+                    {% else %}
+
+                        <a href="/follow/{{ user.username }}">
+                            Follow
+                        </a>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
 
         </div>
 
-        <hr>
+        <div class="profile-content">
 
-    {% endfor %}
+            {% if is_owner %}
+
+                <div class="post-form">
+
+                    <h2>Create Post</h2>
+
+                    <form action="/posts" method="POST">
+
+                        <textarea
+                            name="content"
+                            placeholder="What's happening?"
+                            rows="5"
+                            required
+                        ></textarea>
+
+                        <br><br>
+
+                        <button type="submit">
+                            Post
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% endif %}
+
+            <h2>Posts</h2>
+
+            {% for post in posts %}
+
+                <div class="post-card">
+
+                    <a href="/posts/{{ post.id }}">
+
+                        <p>
+                            {{ post.content }}
+                        </p>
+
+                    </a>
+
+                    <small>
+                        {{ post.created_at }}
+                    </small>
+
+                    {% if post.user_id == session["user_id"] %}
+
+                        <br><br>
+
+                        <a href="/delete_post/{{ post.id }}">
+                            Delete
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
 
 </body>
 

@@ -2,100 +2,181 @@
 <html>
 
 <head>
+
     <title>Feed</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .feed-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .sidebar {
+            width: 25%;
+        }
+
+        .feed-content {
+            width: 75%;
+        }
+
+        .profile-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .navigation-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+        }
+
+        .post-form {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .post-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+        }
+
+        button {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        img {
+            border-radius: 50%;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-    <div>
+    <h1>Your Feed</h1>
 
-        <h1>
-            Your Feed
-        </h1>
+    <div class="feed-container">
 
-        <a href="/profile/{{ current_user.username }}">
+        <div class="sidebar">
 
-            <img
-                src="{{ url_for(
-                    'static',
-                    filename='profile_pictures/' + current_user.profile_picture
-                ) }}"
-                width="100"
-            >
+            <div class="profile-card">
 
-            <br><br>
+                <a href="/profile/{{ current_user.username }}">
 
-            @{{ current_user.username }}
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='profile_pictures/' + current_user.profile_picture
+                        ) }}"
+                        width="100"
+                    >
 
-        </a>
+                    <br><br>
 
-        <br><br>
+                    <b>
+                        @{{ current_user.username }}
+                    </b>
 
-        <a href="/logout">
-            Logout
-        </a>
-
-    </div>
-
-    <hr>
-
-    <form action="/posts" method="POST">
-
-        <textarea
-            name="content"
-            placeholder="What's happening?"
-            rows="5"
-            cols="50"
-            required
-        ></textarea>
-
-        <br><br>
-
-        <button type="submit">
-            Post
-        </button>
-
-    </form>
-
-    <hr>
-
-    {% for post in posts %}
-
-        <div>
-
-            <a href="/profile/{{ post.author.username }}">
-                @{{ post.author.username }}
-            </a>
-
-            <br><br>
-
-            <a href="/posts/{{ post.id }}">
-
-                {{ post.content }}
-
-            </a>
-
-            <br><br>
-
-            <small>
-                {{ post.created_at }}
-            </small>
-
-                {% if post.user_id == session["user_id"] %}
-
-                 <br><br>
-
-                <a href="/delete_post/{{ post.id }}">
-                    Delete
                 </a>
 
-                 {% endif %}
+                <br><br>
+
+                <a href="/logout">
+                    Logout
+                </a>
+
+            </div>
+
+            <div class="navigation-card">
+
+                <a href="/discover">
+                    Discover
+                </a>
+
+            </div>
 
         </div>
 
-        <hr>
+        <div class="feed-content">
 
-    {% endfor %}
+            <div class="post-form">
+
+                <form action="/posts" method="POST">
+
+                    <textarea
+                        name="content"
+                        placeholder="What's happening?"
+                        rows="5"
+                        required
+                    ></textarea>
+
+                    <br><br>
+
+                    <button type="submit">
+                        Post
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% for post in posts %}
+
+                <div class="post-card">
+
+                    <a href="/profile/{{ post.author.username }}">
+
+                        <b>
+                            @{{ post.author.username }}
+                        </b>
+
+                    </a>
+
+                    <br><br>
+
+                    <a href="/posts/{{ post.id }}">
+
+                        {{ post.content }}
+
+                    </a>
+
+                    <br><br>
+
+                    <small>
+                        {{ post.created_at }}
+                    </small>
+
+                    {% if post.user_id == session["user_id"] %}
+
+                        <br><br>
+
+                        <a href="/delete_post/{{ post.id }}">
+                            Delete
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
 
 </body>
 

@@ -56,6 +56,11 @@
             border-radius: 50%;
         }
 
+        .online-status {
+            color: green;
+            font-weight: bold;
+        }
+
     </style>
 
 </head>
@@ -67,7 +72,7 @@
     <a href="/feed">
         Back to Feed
     </a>
-    
+
     <br><br>
 
     <div class="profile-container">
@@ -89,6 +94,34 @@
                 <b>
                     @{{ user.username }}
                 </b>
+
+                <br><br>
+
+                {% if user.is_online %}
+
+                    <span class="online-status">
+                        ● Online now
+                    </span>
+
+                {% else %}
+
+                    <small>
+
+                        Last seen:
+
+                        {% if user.last_seen %}
+
+                            {{ user.last_seen }}
+
+                        {% else %}
+
+                            Never
+
+                        {% endif %}
+
+                    </small>
+
+                {% endif %}
 
                 <br><br>
 

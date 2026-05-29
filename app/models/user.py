@@ -1,5 +1,6 @@
 from database import db
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 
 class User(db.Model):
@@ -28,12 +29,25 @@ class User(db.Model):
     )
 
     posts = db.relationship(
-    "Post",
-    backref="author",
-    lazy=True
+        "Post",
+        backref="author",
+        lazy=True
     )
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.now
+        default=lambda: datetime.now(
+            ZoneInfo("Europe/Istanbul")
+        )
+    )
+
+    last_seen = db.Column(
+        db.DateTime,
+        nullable=True,
+        default=None
+    )
+
+    is_online = db.Column(
+        db.Boolean,
+        default=False
     )

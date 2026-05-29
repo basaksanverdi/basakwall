@@ -10,6 +10,9 @@ from werkzeug.security import (
     check_password_hash
 )
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from database import db
 from app.models.user import User
 
@@ -54,6 +57,20 @@ def register_routes(app):
         if not username or not password:
             return "Missing credentials", 400
 
+        if "user_id" in session:
+
+            old_user = User.query.get(
+                session["user_id"]
+            )
+
+            if old_user:
+
+                old_user.is_online = False
+
+                old_user.last_seen = datetime.now(
+                    ZoneInfo("Europe/Istanbul")
+                )
+
         user = User.query.filter_by(
             username=username
         ).first()
@@ -67,16 +84,36 @@ def register_routes(app):
         ):
             return "Invalid username or password", 401
 
+        user.is_online = True
+
+        db.session.commit()
+
         session["user_id"] = user.id
         session["username"] = user.username
+
         print("session:", session)
 
-        # return redirect(f"/profile/{user.username}")
         return redirect("/feed")
 
 
     @app.route("/logout")
     def logout():
+
+        if "user_id" in session:
+
+            user = User.query.get(
+                session["user_id"]
+            )
+
+            if user:
+
+                user.is_online = False
+
+                user.last_seen = datetime.now(
+                    ZoneInfo("Europe/Istanbul")
+                )
+
+                db.session.commit()
 
         session.clear()
 

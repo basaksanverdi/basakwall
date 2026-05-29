@@ -4,6 +4,9 @@ from app.models.follow import Follow
 from app.models.post import Post
 from sqlalchemy.orm import joinedload
 
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
 
 def register_profile_routes(app):
 
@@ -40,6 +43,24 @@ def register_profile_routes(app):
             session["user_id"] == user.id
         )
 
+        is_online = False
+
+        if user.last_activity:
+
+            now = datetime.now(
+                ZoneInfo("Europe/Istanbul")
+            )
+
+            last_activity = user.last_activity.replace(
+                tzinfo=ZoneInfo("Europe/Istanbul")
+            )
+
+            difference = now - last_activity
+
+            if difference < timedelta(minutes=1):
+
+                is_online = True
+
         print(session)
 
         return render_template(
@@ -50,7 +71,8 @@ def register_profile_routes(app):
             following_count=following_count,
             is_following=is_following,
             posts=posts,
-            is_owner=is_owner
+            is_owner=is_owner,
+            is_online=is_online
         )
 
     @app.route("/profile/<username>/followers")

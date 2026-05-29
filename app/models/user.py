@@ -47,6 +47,11 @@ class User(db.Model):
         default=None
     )
 
+    last_activity = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
     is_online = db.Column(
         db.Boolean,
         default=False

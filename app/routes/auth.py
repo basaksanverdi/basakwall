@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 
 from database import db
 from app.models.user import User
+from app.models.login_history import LoginHistory
 
 
 def register_routes(app):
@@ -71,6 +72,19 @@ def register_routes(app):
                     ZoneInfo("Europe/Istanbul")
                 )
 
+                active_session = LoginHistory.query.filter_by(
+                    user_id=old_user.id,
+                    logout_time=None
+                ).order_by(
+                    LoginHistory.login_time.desc()
+                ).first()
+
+                if active_session:
+
+                    active_session.logout_time = datetime.now(
+                        ZoneInfo("Europe/Istanbul")
+                    )
+
         user = User.query.filter_by(
             username=username
         ).first()
@@ -85,6 +99,13 @@ def register_routes(app):
             return "Invalid username or password", 401
 
         user.is_online = True
+
+        new_login = LoginHistory(
+            user_id=user.id,
+            ip_address=request.remote_addr
+        )
+
+        db.session.add(new_login)
 
         db.session.commit()
 
@@ -112,6 +133,19 @@ def register_routes(app):
                 user.last_seen = datetime.now(
                     ZoneInfo("Europe/Istanbul")
                 )
+
+                active_session = LoginHistory.query.filter_by(
+                    user_id=user.id,
+                    logout_time=None
+                ).order_by(
+                    LoginHistory.login_time.desc()
+                ).first()
+
+                if active_session:
+
+                    active_session.logout_time = datetime.now(
+                        ZoneInfo("Europe/Istanbul")
+                    )
 
                 db.session.commit()
 

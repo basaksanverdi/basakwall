@@ -1,6 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 from config import Config
 from database import db
+
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+from app.models.user import User
 
 app = Flask(
     __name__,
@@ -18,6 +23,7 @@ from app.routes.follows import register_follow_routes
 from app.routes.posts import register_post_routes
 from app.routes.feed import register_feed_routes
 from app.routes.discover import register_discover_routes
+from app.models.login_history import LoginHistory
 
 register_routes(app)
 register_profile_routes(app)
@@ -35,6 +41,24 @@ with app.app_context():
     db.create_all()
 
 
+@app.before_request
+def update_last_activity():
+
+    if "user_id" in session:
+
+        user = User.query.get(
+            session["user_id"]
+        )
+
+        if user:
+
+            user.last_activity = datetime.now(
+                ZoneInfo("Europe/Istanbul")
+            )
+
+            db.session.commit()
+
+
 @app.route("/")
 def home():
 
@@ -48,4 +72,3 @@ if __name__ == "__main__":
         port=5000,
         debug=True
     )
-    

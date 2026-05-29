@@ -141,6 +141,14 @@
 
                 <br><br>
 
+                <a href="/profile/{{ user.username }}/favorites">
+
+                    Favorites
+
+                </a>
+
+                <br><br>
+
                 <small>
                     Joined:
                     {{ user.created_at }}
@@ -222,6 +230,40 @@
                     <small>
                         {{ post.created_at }}
                     </small>
+
+                    <br><br>
+
+                    {% if post.favorites|length > 0 %}
+
+                        <a href="/post/{{ post.id }}/favorites">
+
+                            Favorites:
+                            {{ post.favorites|length }}
+
+                        </a>
+
+                    {% else %}
+
+                        Favorites:
+                        0
+
+                    {% endif %}
+
+                    <br><br>
+
+                    {% if post.id in favorited_post_ids %}
+
+                        <a href="/unfav/{{ post.id }}">
+                            ★ Unfav
+                        </a>
+
+                    {% else %}
+
+                        <a href="/fav/{{ post.id }}">
+                            ☆ Fav
+                        </a>
+
+                    {% endif %}
 
                     {% if post.user_id == session["user_id"] %}
 

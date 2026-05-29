@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        {{ user.username }} Favorites
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .favorite-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>
+        @{{ user.username }} Favorites
+    </h1>
+
+    <a href="/profile/{{ user.username }}">
+        Back to Profile
+    </a>
+
+    <br><br>
+
+    {% if favorites %}
+
+        {% for favorite in favorites %}
+
+            <div class="favorite-card">
+
+                <a href="/profile/{{ favorite.post.author.username }}">
+
+                    <b>
+                        @{{ favorite.post.author.username }}
+                    </b>
+
+                </a>
+
+                <br><br>
+
+                <a href="/posts/{{ favorite.post.id }}">
+
+                    {{ favorite.post.content }}
+
+                </a>
+
+                <br><br>
+
+                Favorites:
+                {{ favorite.post.favorites|length }}
+
+                <br><br>
+
+                {% if favorite.post.id in favorited_post_ids %}
+
+                    <a href="/unfav/{{ favorite.post.id }}">
+                        ★ Unfav
+                    </a>
+
+                {% else %}
+
+                    <a href="/fav/{{ favorite.post.id }}">
+                        ☆ Fav
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        No favorites yet.
+
+    {% endif %}
+
+</body>
+
+</html>

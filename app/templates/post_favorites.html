@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        Favorites
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .favorite-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>
+        Favorites
+    </h1>
+
+    <a href="/posts/{{ post.id }}">
+        Back to Post
+    </a>
+
+    <br><br>
+
+    {% if favorites %}
+
+        {% for favorite in favorites %}
+
+            <div class="favorite-card">
+
+                <a href="/profile/{{ favorite.user.username }}">
+
+                    @{{ favorite.user.username }}
+
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        Nobody has favorited this post yet.
+
+    {% endif %}
+
+</body>
+
+</html>

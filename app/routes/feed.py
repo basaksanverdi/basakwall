@@ -2,6 +2,7 @@ from flask import render_template, session, redirect
 from app.models.post import Post
 from app.models.follow import Follow
 from app.models.user import User
+from app.models.favorite import Favorite
 
 
 def register_feed_routes(app):
@@ -35,8 +36,19 @@ def register_feed_routes(app):
             Post.created_at.desc()
         ).all()
 
+        favorited_post_ids = [
+
+            favorite.post_id
+
+            for favorite in Favorite.query.filter_by(
+                user_id=session["user_id"]
+            ).all()
+
+        ]
+
         return render_template(
             "feed.html",
             posts=posts,
-            current_user=current_user
+            current_user=current_user,
+            favorited_post_ids=favorited_post_ids
         )

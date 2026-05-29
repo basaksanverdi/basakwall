@@ -2,6 +2,7 @@ from flask import render_template, session
 from app.models.user import User
 from app.models.follow import Follow
 from app.models.post import Post
+from app.models.favorite import Favorite
 from sqlalchemy.orm import joinedload
 
 from datetime import datetime, timedelta
@@ -39,6 +40,16 @@ def register_profile_routes(app):
             Post.created_at.desc()
         ).all()
 
+        favorited_post_ids = [
+
+            favorite.post_id
+
+            for favorite in Favorite.query.filter_by(
+                user_id=session["user_id"]
+            ).all()
+
+        ]
+
         is_owner = (
             session["user_id"] == user.id
         )
@@ -72,7 +83,8 @@ def register_profile_routes(app):
             is_following=is_following,
             posts=posts,
             is_owner=is_owner,
-            is_online=is_online
+            is_online=is_online,
+            favorited_post_ids=favorited_post_ids
         )
 
     @app.route("/profile/<username>/followers")
@@ -117,4 +129,37 @@ def register_profile_routes(app):
             "following.html",
             user=user,
             following=following
+        )
+
+    @app.route("/profile/<username>/favorites")
+    def user_favorites(username):
+
+        user = User.query.filter_by(
+            username=username
+        ).first()
+
+        if not user:
+            return "User not found"
+
+        favorites = Favorite.query.filter_by(
+            user_id=user.id
+        ).order_by(
+            Favorite.created_at.desc()
+        ).all()
+
+        favorited_post_ids = [
+
+            favorite.post_id
+
+            for favorite in Favorite.query.filter_by(
+                user_id=session["user_id"]
+            ).all()
+
+        ]
+
+        return render_template(
+            "profile_favorites.html",
+            user=user,
+            favorites=favorites,
+            favorited_post_ids=favorited_post_ids
         )

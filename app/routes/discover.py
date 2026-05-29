@@ -4,6 +4,7 @@ from sqlalchemy import desc
 from app.models.user import User
 from app.models.follow import Follow
 from app.models.post import Post
+from app.models.favorite import Favorite
 
 
 def register_discover_routes(app):
@@ -34,8 +35,19 @@ def register_discover_routes(app):
             ~Post.user_id.in_(followed_user_ids)
         ).order_by(desc(Post.created_at)).all()
 
+        favorited_post_ids = [
+
+            favorite.post_id
+
+            for favorite in Favorite.query.filter_by(
+                user_id=current_user_id
+            ).all()
+
+        ]
+
         return render_template(
             "discover.html",
             discover_users=discover_users,
-            discover_posts=discover_posts
+            discover_posts=discover_posts,
+            favorited_post_ids=favorited_post_ids
         )

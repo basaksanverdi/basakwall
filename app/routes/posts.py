@@ -59,11 +59,23 @@ def register_post_routes(app):
 
         current_user = User.query.get(session["user_id"])
 
+        favorited_comment_ids = [
+            favorite.comment_id
+            for favorite in current_user.comment_favorites
+        ]
+
+        favorited_post_ids = [
+            favorite.post_id
+            for favorite in current_user.favorites
+        ]
+
         next_page = request.args.get("next")
 
         return render_template(
             "post.html",
             post=post,
             current_user=current_user,
-            next_page=next_page
+            next_page=next_page,
+            favorited_comment_ids=favorited_comment_ids,
+            favorited_post_ids=favorited_post_ids
         )

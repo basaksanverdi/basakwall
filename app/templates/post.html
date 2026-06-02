@@ -157,6 +157,22 @@
 
                 <br><br>
 
+                {% if post.id in favorited_post_ids %}
+
+                    <a href="/unfav/{{ post.id }}">
+                        ★ Unfav
+                    </a>
+
+                {% else %}
+
+                    <a href="/fav/{{ post.id }}">
+                        ☆ Fav
+                    </a>
+
+                {% endif %}
+
+                <br><br>
+
                 <a href="/posts/{{ post.id }}">
 
                     Comments:
@@ -176,11 +192,11 @@
 
             </div>
 
-            <div class="comment-form">
+            <h2>
+                Comments
+            </h2>
 
-                <h3>
-                    Comments
-                </h3>
+            <div class="comment-form">
 
                 <form action="/comment/{{ post.id }}" method="POST">
 
@@ -227,24 +243,18 @@
 
                     </a>
 
-                    <br>
+                    <br><br>
 
-                    Favorites:
-                    {{ comment.favorites|length }}
+                    <a href="/comment/{{ comment.id }}/favorites">
+
+                        Favorites:
+                        {{ comment.favorites|length }}
+
+                    </a>
 
                     <br><br>
 
-                    {% set comment_favorited = false %}
-
-                    {% for favorite in comment.favorites %}
-
-                        {% if favorite.user_id == session["user_id"] %}
-                            {% set comment_favorited = true %}
-                        {% endif %}
-
-                    {% endfor %}
-
-                    {% if comment_favorited %}
+                    {% if comment.id in favorited_comment_ids %}
 
                         <a href="/comment_unfav/{{ comment.id }}">
                             ★ Unfav

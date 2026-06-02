@@ -24,6 +24,7 @@ from app.routes.posts import register_post_routes
 from app.routes.feed import register_feed_routes
 from app.routes.discover import register_discover_routes
 from app.routes.favorites import register_favorite_routes
+from app.routes.comments import register_comment_routes
 
 register_routes(app)
 register_profile_routes(app)
@@ -32,6 +33,7 @@ register_post_routes(app)
 register_feed_routes(app)
 register_discover_routes(app)
 register_favorite_routes(app)
+register_comment_routes(app)
 
 with app.app_context():
 
@@ -40,6 +42,7 @@ with app.app_context():
     from app.models.post import Post
     from app.models.login_history import LoginHistory
     from app.models.favorite import Favorite
+    from app.models.comment import Comment
 
     db.create_all()
 

@@ -34,6 +34,13 @@ class User(db.Model):
         lazy=True
     )
 
+    comments = db.relationship(
+    "Comment",
+    backref="user",
+    lazy=True,
+    cascade="all, delete-orphan"
+    )  
+
     created_at = db.Column(
         db.DateTime,
         default=lambda: datetime.now(

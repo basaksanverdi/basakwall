@@ -3,9 +3,9 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 
-class Post(db.Model):
+class Comment(db.Model):
 
-    __tablename__ = "posts"
+    __tablename__ = "comments"
 
     id = db.Column(
         db.Integer,
@@ -30,9 +30,8 @@ class Post(db.Model):
         nullable=False
     )
 
-    comments = db.relationship(
-    "Comment",
-    backref="post",
-    lazy=True,
-    cascade="all, delete-orphan"
+    post_id = db.Column(
+        db.Integer,
+        db.ForeignKey("posts.id"),
+        nullable=False
     )

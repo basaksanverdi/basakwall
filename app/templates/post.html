@@ -1,30 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Post</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .post-page-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .sidebar {
+            width: 25%;
+        }
+
+        .content {
+            width: 75%;
+        }
+
+        .profile-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .post-card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .comment-form {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .comment-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            width: 100%;
+        }
+
+        button {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        img {
+            border-radius: 50%;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-    <a href="/profile/{{ post.author.username }}">
-        @{{ post.author.username }}
-    </a>
+    <div class="post-page-container">
 
-    <hr>
+        <div class="sidebar">
 
-    <p>
-        {{ post.content }}
-    </p>
+            <div class="profile-card">
 
-    <small>
-        {{ post.created_at }}
-    </small>
+                <a href="/profile/{{ current_user.username }}">
 
-     {% if post.user_id == session["user_id"] %}
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='profile_pictures/' + current_user.profile_picture
+                        ) }}"
+                        width="100"
+                    >
 
-        <br><br>
+                    <br><br>
 
-        <a href="/delete_post/{{ post.id }}">
-            Delete Post
-        </a>
+                    <b>
+                        @{{ current_user.username }}
+                    </b>
 
-    {% endif %}
+                </a>
+
+                <br><br>
+
+                <a href="/logout">
+                    Logout
+                </a>
+
+                <hr>
+
+                {% if next_page == "feed" %}
+
+                    <a href="/feed">
+                        ← Back to Feed
+                    </a>
+
+                {% elif next_page == "discover" %}
+
+                    <a href="/discover">
+                        ← Back to Discover
+                    </a>
+
+                {% else %}
+
+                    <a href="/profile/{{ post.author.username }}">
+                        ← Back to @{{ post.author.username }}
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="content">
+
+            <div class="post-card">
+
+                <a href="/profile/{{ post.author.username }}">
+
+                    <b>
+                        @{{ post.author.username }}
+                    </b>
+
+                </a>
+
+                <br><br>
+
+                <p>
+                    {{ post.content }}
+                </p>
+
+                <small>
+                    {{ post.created_at.strftime("%d.%m.%Y %H:%M") }}
+                </small>
+
+                <br><br>
+
+                <a href="/post/{{ post.id }}/favorites">
+
+                    Favorites:
+                    {{ post.favorites|length }}
+
+                </a>
+
+                <br><br>
+
+                <a href="/posts/{{ post.id }}">
+
+                    Comments:
+                    {{ post.comments|length }}
+
+                </a>
+
+                {% if post.user_id == session["user_id"] %}
+
+                    <br><br>
+
+                    <a href="/delete_post/{{ post.id }}">
+                        Delete Post
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+            <div class="comment-form">
+
+                <h3>
+                    Comments
+                </h3>
+
+                <form action="/comment/{{ post.id }}" method="POST">
+
+                    <textarea
+                        name="content"
+                        placeholder="Write a comment..."
+                        rows="4"
+                        required
+                    ></textarea>
+
+                    <br><br>
+
+                    <button type="submit">
+                        Comment
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% for comment in post.comments|reverse %}
+
+                <div class="comment-card">
+
+                    <a href="/profile/{{ comment.user.username }}">
+
+                        <b>
+                            @{{ comment.user.username }}
+                        </b>
+
+                    </a>
+
+                    <br><br>
+
+                    <small>
+                        {{ comment.created_at.strftime("%d.%m.%Y %H:%M") }}
+                    </small>
+
+                    <br><br>
+
+                    <p>
+                        {{ comment.content }}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
 
 </body>
 

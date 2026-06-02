@@ -219,7 +219,7 @@
 
                 <div class="post-card">
 
-                    <a href="/posts/{{ post.id }}">
+                    <a href="/posts/{{ post.id }}?next=profile">
 
                         <p>
                             {{ post.content }}
@@ -248,6 +248,15 @@
                         0
 
                     {% endif %}
+
+                    <br><br>
+
+                    <a href="/posts/{{ post.id }}?next=profile">
+
+                        Comments:
+                        {{ post.comments|length }}
+
+                    </a>
 
                     <br><br>
 

@@ -94,9 +94,15 @@
                         <b>{{ post.author.username }}</b>
                     </a>
 
-                    <p>
+                    <br><br>
+
+                    <a href="/posts/{{ post.id }}?next=discover">
+
                         {{ post.content }}
-                    </p>
+
+                    </a>
+
+                    <br><br>
 
                     <small>
                         {{ post.created_at }}
@@ -119,6 +125,15 @@
                         0
 
                     {% endif %}
+
+                    <br><br>
+
+                    <a href="/posts/{{ post.id }}?next=discover">
+
+                        Comments:
+                        {{ post.comments|length }}
+
+                    </a>
 
                     <br><br>
 

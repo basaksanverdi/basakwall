@@ -148,7 +148,7 @@
 
                     <br><br>
 
-                    <a href="/posts/{{ post.id }}">
+                    <a href="/posts/{{ post.id }}?next=feed">
 
                         {{ post.content }}
 
@@ -177,6 +177,15 @@
                         0
 
                     {% endif %}
+
+                    <br><br>
+
+                    <a href="/posts/{{ post.id }}?next=feed">
+
+                        Comments:
+                        {{ post.comments|length }}
+
+                    </a>
 
                     <br><br>
 

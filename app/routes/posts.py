@@ -1,5 +1,6 @@
 from flask import request, redirect, session, render_template
 from app.models.post import Post
+from app.models.user import User
 from database import db
 
 
@@ -48,12 +49,21 @@ def register_post_routes(app):
     @app.route("/posts/<int:post_id>")
     def view_post(post_id):
 
+        if "user_id" not in session:
+            return redirect("/login")
+
         post = Post.query.get(post_id)
 
         if not post:
             return "Post not found"
 
+        current_user = User.query.get(session["user_id"])
+
+        next_page = request.args.get("next")
+
         return render_template(
             "post.html",
-            post=post
+            post=post,
+            current_user=current_user,
+            next_page=next_page
         )

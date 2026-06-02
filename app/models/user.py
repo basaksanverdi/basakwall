@@ -39,7 +39,14 @@ class User(db.Model):
     backref="user",
     lazy=True,
     cascade="all, delete-orphan"
-    )  
+    )
+
+    favorites = db.relationship(
+    "Favorite",
+    backref="user",
+    lazy=True,
+    cascade="all, delete-orphan"
+    )
 
     created_at = db.Column(
         db.DateTime,

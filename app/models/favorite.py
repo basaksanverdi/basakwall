@@ -7,6 +7,13 @@ class Favorite(db.Model):
 
     __tablename__ = "favorites"
 
+    __table_args__ = (
+        db.UniqueConstraint(
+            "user_id",
+            "post_id"
+        ),
+    )
+
     id = db.Column(
         db.Integer,
         primary_key=True
@@ -29,14 +36,4 @@ class Favorite(db.Model):
         default=lambda: datetime.now(
             ZoneInfo("Europe/Istanbul")
         )
-    )
-
-    user = db.relationship(
-        "User",
-        backref="favorites"
-    )
-
-    post = db.relationship(
-        "Post",
-        backref="favorites"
     )

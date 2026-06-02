@@ -36,3 +36,10 @@ class Post(db.Model):
     lazy=True,
     cascade="all, delete-orphan"
     )
+
+    favorites = db.relationship(
+    "Favorite",
+    backref="post",
+    lazy=True,
+    cascade="all, delete-orphan"
+    )

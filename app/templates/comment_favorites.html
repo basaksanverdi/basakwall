@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        Comment Favorites
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .favorite-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>
+        Comment Favorites
+    </h1>
+
+    <a href="/comments/{{ comment.id }}">
+        Back to Comment
+    </a>
+
+    <br><br>
+
+    <div class="favorite-card">
+
+        <b>
+            Comment:
+        </b>
+
+        <br><br>
+
+        {{ comment.content }}
+
+    </div>
+
+    {% if favorites %}
+
+        {% for favorite in favorites %}
+
+            <div class="favorite-card">
+
+                <a href="/profile/{{ favorite.user.username }}">
+
+                    @{{ favorite.user.username }}
+
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        Nobody has favorited this comment yet.
+
+    {% endif %}
+
+</body>
+
+</html>

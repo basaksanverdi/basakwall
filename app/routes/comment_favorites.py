@@ -1,4 +1,4 @@
-from flask import session, redirect, request
+from flask import session, redirect, request, render_template
 from database import db
 
 from app.models.comment import Comment
@@ -54,3 +54,25 @@ def register_comment_favorite_routes(app):
             db.session.commit()
 
         return redirect(request.referrer)
+
+
+    @app.route("/comment/<int:comment_id>/favorites")
+    def comment_favorites(comment_id):
+
+        if "user_id" not in session:
+            return redirect("/login")
+
+        comment = Comment.query.get(comment_id)
+
+        if not comment:
+            return "Comment not found", 404
+
+        favorites = CommentFavorite.query.filter_by(
+            comment_id=comment.id
+        ).all()
+
+        return render_template(
+            "comment_favorites.html",
+            comment=comment,
+            favorites=favorites
+        )

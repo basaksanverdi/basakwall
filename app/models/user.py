@@ -48,6 +48,13 @@ class User(db.Model):
     cascade="all, delete-orphan"
     )
 
+    comment_favorites = db.relationship(
+    "CommentFavorite",
+    backref="user",
+    lazy=True,
+    cascade="all, delete-orphan"
+    )
+
     created_at = db.Column(
         db.DateTime,
         default=lambda: datetime.now(

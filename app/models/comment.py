@@ -35,3 +35,10 @@ class Comment(db.Model):
         db.ForeignKey("posts.id"),
         nullable=False
     )
+
+    favorites = db.relationship(
+    "CommentFavorite",
+    backref="comment",
+    lazy=True,
+    cascade="all, delete-orphan"
+    )   

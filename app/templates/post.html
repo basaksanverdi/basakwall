@@ -225,6 +225,37 @@
                         {{ comment.content }}
                     </p>
 
+                    <br>
+
+                    Favorites:
+                    {{ comment.favorites|length }}
+
+                    <br><br>
+
+                    {% set comment_favorited = false %}
+
+                    {% for favorite in comment.favorites %}
+
+                        {% if favorite.user_id == session["user_id"] %}
+                            {% set comment_favorited = true %}
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {% if comment_favorited %}
+
+                        <a href="/comment_unfav/{{ comment.id }}">
+                            ★ Unfav
+                        </a>
+
+                    {% else %}
+
+                        <a href="/comment_fav/{{ comment.id }}">
+                            ☆ Fav
+                        </a>
+
+                    {% endif %}
+
                 </div>
 
             {% endfor %}

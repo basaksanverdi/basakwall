@@ -143,6 +143,16 @@
 
                 {% endif %}
 
+                {% if comment.user_id == session["user_id"] %}
+
+                    <br><br>
+
+                    <a href="/delete_comment/{{ comment.id }}">
+                        Delete Comment
+                     </a>
+
+                {% endif %}
+
             </div>
 
             <div class="card">
@@ -276,6 +286,16 @@
 
                         <a href="/comment_fav/{{ other_comment.id }}">
                             ☆ Fav
+                        </a>
+
+                    {% endif %}
+
+                    {% if other_comment.user_id == session["user_id"] %}
+
+                        <br><br>
+
+                        <a href="/delete_comment/{{ other_comment.id }}">
+                        Delete Comment
                         </a>
 
                     {% endif %}

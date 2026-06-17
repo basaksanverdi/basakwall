@@ -80,7 +80,7 @@
 
                     <br><br>
 
-                    <a href="/post/{{ comment.post.id }}">
+                    <a href="/posts/{{ comment.post.id }}">
                         {{ comment.post.content[:150] }}
                     </a>
 
@@ -91,6 +91,16 @@
                     {{ comment.created_at }}
 
                 </div>
+
+                {% if comment.user_id == session["user_id"] %}
+
+                    <br>
+
+                    <a href="/delete_comment/{{ comment.id }}">
+                        Delete Comment
+                    </a>
+
+                {% endif %}
 
             </div>
 

@@ -60,11 +60,39 @@ def register_comment_routes(app):
             for favorite in current_user.comment_favorites
         ]
 
+        favorited_post_ids = [
+            favorite.post_id
+            for favorite in current_user.favorites
+        ]
+
         return render_template(
             "comment.html",
             comment=comment,
             post=post,
             other_comments=other_comments,
             current_user=current_user,
-            favorited_comment_ids=favorited_comment_ids
+            favorited_comment_ids=favorited_comment_ids,
+            favorited_post_ids=favorited_post_ids
         )
+
+
+    @app.route("/delete_comment/<int:comment_id>")
+    def delete_comment(comment_id):
+
+        if "user_id" not in session:
+            return redirect("/login")
+
+        comment = Comment.query.get(comment_id)
+
+        if not comment:
+            return redirect(request.referrer)
+
+        if comment.user_id != session["user_id"]:
+            return redirect(request.referrer)
+
+        post_id = comment.post_id
+
+        db.session.delete(comment)
+        db.session.commit()
+
+        return redirect(f"/posts/{post_id}")

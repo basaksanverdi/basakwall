@@ -4,6 +4,7 @@ from app.models.follow import Follow
 from app.models.post import Post
 from app.models.favorite import Favorite
 from app.models.comment import Comment
+from app.models.comment_favorite import CommentFavorite
 from sqlalchemy.orm import joinedload
 
 from datetime import datetime, timedelta
@@ -166,11 +167,37 @@ def register_profile_routes(app):
         if not user:
             return "User not found"
 
-        favorites = Favorite.query.filter_by(
+        post_favorites = Favorite.query.filter_by(
             user_id=user.id
-        ).order_by(
-            Favorite.created_at.desc()
         ).all()
+
+        comment_favorites = CommentFavorite.query.filter_by(
+            user_id=user.id
+        ).all()
+
+        unified_favorites = []
+
+        for favorite in post_favorites:
+
+            unified_favorites.append({
+                "type": "post",
+                "created_at": favorite.created_at,
+                "favorite": favorite
+            })
+
+        for favorite in comment_favorites:
+
+            unified_favorites.append({
+                "type": "comment",
+                "created_at": favorite.created_at,
+                "favorite": favorite
+            })
+
+        unified_favorites = sorted(
+            unified_favorites,
+            key=lambda item: item["created_at"],
+            reverse=True
+        )
 
         favorited_post_ids = [
 
@@ -182,9 +209,20 @@ def register_profile_routes(app):
 
         ]
 
+        favorited_comment_ids = [
+
+            favorite.comment_id
+
+            for favorite in CommentFavorite.query.filter_by(
+                user_id=session["user_id"]
+            ).all()
+
+        ]
+
         return render_template(
             "profile_favorites.html",
             user=user,
-            favorites=favorites,
-            favorited_post_ids=favorited_post_ids
+            unified_favorites=unified_favorites,
+            favorited_post_ids=favorited_post_ids,
+            favorited_comment_ids=favorited_comment_ids
         )

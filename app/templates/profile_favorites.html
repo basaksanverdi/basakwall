@@ -20,6 +20,23 @@
             margin-bottom: 20px;
         }
 
+        .favorite-type {
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .favorite-date {
+            color: #777;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .post-preview {
+            margin-top: 15px;
+            color: #555;
+        }
+
     </style>
 
 </head>
@@ -36,63 +53,161 @@
 
     <br><br>
 
-    {% if favorites %}
+    {% if unified_favorites %}
 
-        {% for favorite in favorites %}
+        {% for item in unified_favorites %}
 
-            <div class="favorite-card">
+            {% if item.type == "post" %}
 
-                <a href="/profile/{{ favorite.post.author.username }}">
+                <div class="favorite-card">
 
-                    <b>
-                        @{{ favorite.post.author.username }}
-                    </b>
+                    <div class="favorite-type">
+                        Favorited Post
+                    </div>
 
-                </a>
+                    <a href="/profile/{{ item.favorite.post.author.username }}">
 
-                <br><br>
+                        <b>
+                            @{{ item.favorite.post.author.username }}
+                        </b>
 
-                <a href="/posts/{{ favorite.post.id }}">
+                    </a>
 
-                    {{ favorite.post.content }}
+                    <br><br>
 
-                </a>
+                    <a href="/posts/{{ item.favorite.post.id }}">
 
-                <br><br>
+                        {{ item.favorite.post.content }}
 
-                {% if favorite.post.favorites|length > 0 %}
+                    </a>
 
-                    <a href="/post/{{ favorite.post.id }}/favorites">
+                    <br><br>
+
+                    {% if item.favorite.post.favorites|length > 0 %}
+
+                        <a href="/post/{{ item.favorite.post.id }}/favorites">
+
+                            Favorites:
+                            {{ item.favorite.post.favorites|length }}
+
+                        </a>
+
+                    {% else %}
 
                         Favorites:
-                        {{ favorite.post.favorites|length }}
+                        0
 
+                    {% endif %}
+
+                    <br><br>
+
+                    {% if item.favorite.post.id in favorited_post_ids %}
+
+                        <a href="/unfav/{{ item.favorite.post.id }}">
+                            ★ Unfav
+                        </a>
+
+                    {% else %}
+
+                        <a href="/fav/{{ item.favorite.post.id }}">
+                            ☆ Fav
+                        </a>
+
+                    {% endif %}
+
+                    <div class="favorite-date">
+
+                        Favorited at:
+                        {{ item.created_at }}
+
+                    </div>
+
+                </div>
+
+            {% elif item.type == "comment" %}
+
+                <div class="favorite-card">
+
+                    <div class="favorite-type">
+                        Favorited Comment
+                    </div>
+
+                    <b>
+                        Comment:
+                    </b>
+
+                    <br><br>
+
+                    <a href="/comments/{{ item.favorite.comment.id }}">
+                        {{ item.favorite.comment.content }}
                     </a>
 
-                {% else %}
+                    <div class="post-preview">
 
-                    Favorites:
-                    0
+                        <b>
+                            On Post:
+                        </b>
 
-                {% endif %}
+                        <br><br>
 
-                <br><br>
+                        <a href="/profile/{{ item.favorite.comment.post.author.username }}">
 
-                {% if favorite.post.id in favorited_post_ids %}
+                            @{{ item.favorite.comment.post.author.username }}
 
-                    <a href="/unfav/{{ favorite.post.id }}">
-                        ★ Unfav
-                    </a>
+                        </a>
 
-                {% else %}
+                        <br><br>
 
-                    <a href="/fav/{{ favorite.post.id }}">
-                        ☆ Fav
-                    </a>
+                        <a href="/posts/{{ item.favorite.comment.post.id }}">
+                            {{ item.favorite.comment.post.content[:150] }}
+                        </a>
 
-                {% endif %}
+                    </div>
 
-            </div>
+                    <br>
+
+                    {% if item.favorite.comment.favorites|length > 0 %}
+
+                        <a href="/comments/{{ item.favorite.comment.id }}/favorites">
+
+                            Favorites:
+                            {{ item.favorite.comment.favorites|length }}
+
+                        </a>
+
+                    {% else %}
+
+                        Favorites:
+                        0
+
+                    {% endif %}
+
+                    <br><br>
+
+                    {% if item.favorite.comment.id in favorited_comment_ids %}
+
+                        <a href="/comments/{{ item.favorite.comment.id }}/unfav">
+                            ★ Unfav
+                        </a>
+
+                    {% else %}
+
+                        <a href="/comments/{{ item.favorite.comment.id }}/fav">
+                            ☆ Fav
+                        </a>
+
+                    {% endif %}
+
+                    <div class="favorite-date">
+
+                        Favorited at:
+                        {{ item.created_at }}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
 
         {% endfor %}
 

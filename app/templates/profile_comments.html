@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        @{{ user.username }} Comments
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .comment-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .comment-content {
+            color: black;
+            text-decoration: none;
+        }
+
+        .comment-content:hover {
+            text-decoration: underline;
+        }
+
+        .post-preview {
+            margin-top: 10px;
+            color: #555;
+        }
+
+        .comment-date {
+            margin-top: 10px;
+            color: #777;
+            font-size: 13px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>
+        @{{ user.username }} Comments
+    </h1>
+
+    <a href="/profile/{{ user.username }}">
+        Back to Profile
+    </a>
+
+    <br><br>
+
+    {% if comments %}
+
+        {% for comment in comments %}
+
+            <div class="comment-card">
+
+                <b>
+                    Comment:
+                </b>
+
+                <br><br>
+
+                <a class="comment-content" href="/comments/{{ comment.id }}">
+                    {{ comment.content }}
+                </a>
+
+                <div class="post-preview">
+
+                    <b>
+                        On Post:
+                    </b>
+
+                    <br><br>
+
+                    <a href="/post/{{ comment.post.id }}">
+                        {{ comment.post.content[:150] }}
+                    </a>
+
+                </div>
+
+                <div class="comment-date">
+
+                    {{ comment.created_at }}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        @{{ user.username }} has not commented yet.
+
+    {% endif %}
+
+</body>
+
+</html>

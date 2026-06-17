@@ -3,6 +3,7 @@ from app.models.user import User
 from app.models.follow import Follow
 from app.models.post import Post
 from app.models.favorite import Favorite
+from app.models.comment import Comment
 from sqlalchemy.orm import joinedload
 
 from datetime import datetime, timedelta
@@ -85,6 +86,30 @@ def register_profile_routes(app):
             is_owner=is_owner,
             is_online=is_online,
             favorited_post_ids=favorited_post_ids
+        )
+
+    @app.route("/profile/<username>/comments")
+    def profile_comments(username):
+
+        user = User.query.filter_by(
+            username=username
+        ).first()
+
+        if not user:
+            return "User not found"
+
+        comments = Comment.query.options(
+            joinedload(Comment.post)
+        ).filter_by(
+            user_id=user.id
+        ).order_by(
+            Comment.created_at.desc()
+        ).all()
+
+        return render_template(
+            "profile_comments.html",
+            user=user,
+            comments=comments
         )
 
     @app.route("/profile/<username>/followers")

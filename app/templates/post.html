@@ -173,6 +173,31 @@
 
                 <br><br>
 
+                <a href="/posts/{{ post.id }}/reposts">
+
+                    Reposts:
+                    {{ post.reposts|length }}
+
+                </a>
+
+                <br><br>
+
+                {% if post.id in reposted_post_ids %}
+
+                    <a href="/posts/{{ post.id }}/unrepost">
+                        🔁 Unrepost
+                    </a>
+
+                {% else %}
+
+                    <a href="/posts/{{ post.id }}/repost">
+                        🔁 Repost
+                    </a>
+
+                {% endif %}
+
+                <br><br>
+
                 <a href="/posts/{{ post.id }}">
 
                     Comments:
@@ -268,9 +293,34 @@
 
                     {% endif %}
 
+                    <br><br>
+
+                    <a href="/comments/{{ comment.id }}/reposts">
+
+                        Reposts:
+                        {{ comment.reposts|length }}
+
+                    </a>
+
+                    <br><br>
+
+                    {% if comment.id in reposted_comment_ids %}
+
+                        <a href="/comments/{{ comment.id }}/unrepost">
+                            🔁 Unrepost
+                        </a>
+
+                    {% else %}
+
+                        <a href="/comments/{{ comment.id }}/repost">
+                            🔁 Repost
+                        </a>
+
+                    {% endif %}
+
                     {% if comment.user_id == session["user_id"] %}
 
-                         <br><br>
+                        <br><br>
 
                         <a href="/delete_comment/{{ comment.id }}">
                             Delete Comment

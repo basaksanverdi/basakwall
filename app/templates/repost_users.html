@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        Reposts
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .target-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .user-card {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .username {
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .username:hover {
+            text-decoration: underline;
+        }
+
+        .date {
+            color: #777;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>
+        Reposts
+    </h1>
+
+    <a href="/feed">
+        Back to Feed
+    </a>
+
+    <br><br>
+
+    <div class="target-card">
+
+        {% if target_type == "post" %}
+
+            <strong>
+                Post:
+            </strong>
+
+            <p>
+                {{ post.content }}
+            </p>
+
+            <small>
+                Posted by @{{ post.author.username }}
+            </small>
+
+            <br><br>
+
+            <a href="/posts/{{ post.id }}">
+                Go to post
+            </a>
+
+        {% elif target_type == "comment" %}
+
+            <strong>
+                Comment:
+            </strong>
+
+            <p>
+                {{ comment.content }}
+            </p>
+
+            <small>
+                Commented by @{{ comment.user.username }}
+            </small>
+
+            <br>
+
+            <small>
+                On post by @{{ comment.post.author.username }}
+            </small>
+
+            <br><br>
+
+            <a href="/posts/{{ comment.post.id }}">
+                Go to original post
+            </a>
+
+        {% endif %}
+
+    </div>
+
+    {% if reposts %}
+
+        {% for repost in reposts %}
+
+            <div class="user-card">
+
+                <a class="username" href="/profile/{{ repost.user.username }}">
+                    @{{ repost.user.username }}
+                </a>
+
+                <div class="date">
+                    Reposted at: {{ repost.created_at.strftime("%d.%m.%Y %H:%M") }}
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            No reposts yet.
+        </p>
+
+    {% endif %}
+
+</body>
+
+</html>

@@ -1,6 +1,8 @@
 from flask import request, redirect, session, render_template
 from app.models.post import Post
 from app.models.user import User
+from app.models.comment import Comment
+from app.models.repost import Repost
 from database import db
 
 
@@ -69,6 +71,18 @@ def register_post_routes(app):
             for favorite in current_user.favorites
         ]
 
+        reposted_post_ids = [
+            repost.post_id
+            for repost in current_user.reposts
+            if repost.post_id is not None
+        ]
+
+        reposted_comment_ids = [
+            repost.comment_id
+            for repost in current_user.reposts
+            if repost.comment_id is not None
+        ]
+
         next_page = request.args.get("next")
 
         return render_template(
@@ -77,5 +91,7 @@ def register_post_routes(app):
             current_user=current_user,
             next_page=next_page,
             favorited_comment_ids=favorited_comment_ids,
-            favorited_post_ids=favorited_post_ids
+            favorited_post_ids=favorited_post_ids,
+            reposted_post_ids=reposted_post_ids,
+            reposted_comment_ids=reposted_comment_ids
         )

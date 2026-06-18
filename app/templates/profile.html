@@ -43,6 +43,19 @@
             margin-bottom: 20px;
         }
 
+        .repost-label {
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .comment-preview {
+            border-left: 3px solid #ccc;
+            padding-left: 10px;
+            margin-top: 10px;
+            color: #444;
+        }
+
         textarea {
             width: 100%;
         }
@@ -147,6 +160,8 @@
 
                 </a>
 
+                <br><br>
+
                 <a href="/profile/{{ user.username }}/comments">
                     Comments
                 </a>
@@ -219,78 +234,330 @@
 
             <h2>Posts</h2>
 
-            {% for post in posts %}
+            {% if profile_items %}
 
-                <div class="post-card">
+                {% for item in profile_items %}
 
-                    <a href="/posts/{{ post.id }}?next=profile">
+                    <div class="post-card">
 
-                        <p>
-                            {{ post.content }}
-                        </p>
+                        {% if item.type == "post" %}
 
-                    </a>
+                            {% set post = item.post %}
 
-                    <small>
-                        {{ post.created_at }}
-                    </small>
+                            <a href="/profile/{{ post.author.username }}">
+                                <b>
+                                    @{{ post.author.username }}
+                                </b>
+                            </a>
 
-                    <br><br>
+                            <br><br>
 
-                    {% if post.favorites|length > 0 %}
+                            <a href="/posts/{{ post.id }}?next=profile">
 
-                        <a href="/post/{{ post.id }}/favorites">
+                                <p>
+                                    {{ post.content }}
+                                </p>
 
-                            Favorites:
-                            {{ post.favorites|length }}
+                            </a>
 
-                        </a>
+                            <small>
+                                {{ post.created_at }}
+                            </small>
 
-                    {% else %}
+                            <br><br>
 
-                        Favorites:
-                        0
+                            {% if post.favorites|length > 0 %}
 
-                    {% endif %}
+                                <a href="/post/{{ post.id }}/favorites">
 
-                    <br><br>
+                                    Favorites:
+                                    {{ post.favorites|length }}
 
-                    <a href="/posts/{{ post.id }}?next=profile">
+                                </a>
 
-                        Comments:
-                        {{ post.comments|length }}
+                            {% else %}
 
-                    </a>
+                                Favorites:
+                                0
 
-                    <br><br>
+                            {% endif %}
 
-                    {% if post.id in favorited_post_ids %}
+                            <br><br>
 
-                        <a href="/unfav/{{ post.id }}">
-                            ★ Unfav
-                        </a>
+                            <a href="/posts/{{ post.id }}/reposts">
 
-                    {% else %}
+                                Reposts:
+                                {{ post.reposts|length }}
 
-                        <a href="/fav/{{ post.id }}">
-                            ☆ Fav
-                        </a>
+                            </a>
 
-                    {% endif %}
+                            <br><br>
 
-                    {% if post.user_id == session["user_id"] %}
+                            <a href="/posts/{{ post.id }}?next=profile">
 
-                        <br><br>
+                                Comments:
+                                {{ post.comments|length }}
 
-                        <a href="/delete_post/{{ post.id }}">
-                            Delete
-                        </a>
+                            </a>
 
-                    {% endif %}
+                            <br><br>
 
-                </div>
+                            {% if post.id in favorited_post_ids %}
 
-            {% endfor %}
+                                <a href="/unfav/{{ post.id }}">
+                                    ★ Unfav
+                                </a>
+
+                            {% else %}
+
+                                <a href="/fav/{{ post.id }}">
+                                    ☆ Fav
+                                </a>
+
+                            {% endif %}
+
+                            <br><br>
+
+                            {% if post.id in reposted_post_ids %}
+
+                                <a href="/posts/{{ post.id }}/unrepost">
+                                    🔁 Unrepost
+                                </a>
+
+                            {% else %}
+
+                                <a href="/posts/{{ post.id }}/repost">
+                                    🔁 Repost
+                                </a>
+
+                            {% endif %}
+
+                            {% if post.user_id == session["user_id"] %}
+
+                                <br><br>
+
+                                <a href="/delete_post/{{ post.id }}">
+                                    Delete
+                                </a>
+
+                            {% endif %}
+
+                        {% elif item.type == "repost_post" %}
+
+                            {% set post = item.post %}
+
+                            <div class="repost-label">
+                                🔁 @{{ user.username }} reposted this
+                            </div>
+
+                            <a href="/profile/{{ post.author.username }}">
+                                <b>
+                                    @{{ post.author.username }}
+                                </b>
+                            </a>
+
+                            <br><br>
+
+                            <a href="/posts/{{ post.id }}?next=profile">
+
+                                <p>
+                                    {{ post.content }}
+                                </p>
+
+                            </a>
+
+                            <small>
+                                Reposted at: {{ item.created_at.strftime("%d.%m.%Y %H:%M") }}
+                            </small>
+
+                            <br><br>
+
+                            <small>
+                                Original post: {{ post.created_at.strftime("%d.%m.%Y %H:%M") }}
+                            </small>
+
+                            <br><br>
+
+                            {% if post.favorites|length > 0 %}
+
+                                <a href="/post/{{ post.id }}/favorites">
+
+                                    Favorites:
+                                    {{ post.favorites|length }}
+
+                                </a>
+
+                            {% else %}
+
+                                Favorites:
+                                0
+
+                            {% endif %}
+
+                            <br><br>
+
+                            <a href="/posts/{{ post.id }}/reposts">
+
+                                Reposts:
+                                {{ post.reposts|length }}
+
+                            </a>
+
+                            <br><br>
+
+                            <a href="/posts/{{ post.id }}?next=profile">
+
+                                Comments:
+                                {{ post.comments|length }}
+
+                            </a>
+
+                            <br><br>
+
+                            {% if post.id in favorited_post_ids %}
+
+                                <a href="/unfav/{{ post.id }}">
+                                    ★ Unfav
+                                </a>
+
+                            {% else %}
+
+                                <a href="/fav/{{ post.id }}">
+                                    ☆ Fav
+                                </a>
+
+                            {% endif %}
+
+                            <br><br>
+
+                            {% if post.id in reposted_post_ids %}
+
+                                <a href="/posts/{{ post.id }}/unrepost">
+                                    🔁 Unrepost
+                                </a>
+
+                            {% else %}
+
+                                <a href="/posts/{{ post.id }}/repost">
+                                    🔁 Repost
+                                </a>
+
+                            {% endif %}
+
+                        {% elif item.type == "repost_comment" %}
+
+                            {% set comment = item.comment %}
+                            {% set post = item.post %}
+
+                            <div class="repost-label">
+                                🔁 @{{ user.username }} reposted a comment
+                            </div>
+
+                            <a href="/profile/{{ comment.user.username }}">
+                                <b>
+                                    @{{ comment.user.username }}
+                                </b>
+                            </a>
+
+                            <br><br>
+
+                            <a href="/comments/{{ comment.id }}">
+
+                                <p>
+                                    {{ comment.content }}
+                                </p>
+
+                            </a>
+
+                            <small>
+                                Reposted at: {{ item.created_at.strftime("%d.%m.%Y %H:%M") }}
+                            </small>
+
+                            <br><br>
+
+                            <small>
+                                Original comment: {{ comment.created_at.strftime("%d.%m.%Y %H:%M") }}
+                            </small>
+
+                            <div class="comment-preview">
+
+                                <small>
+                                    On post by @{{ post.author.username }}
+                                </small>
+
+                                <p>
+                                    {{ post.content }}
+                                </p>
+
+                                <a href="/posts/{{ post.id }}?next=profile">
+                                    Go to original post
+                                </a>
+
+                            </div>
+
+                            <br>
+
+                            <a href="/comment/{{ comment.id }}/favorites">
+
+                                Favorites:
+                                {{ comment.favorites|length }}
+
+                            </a>
+
+                            <br><br>
+
+                            <a href="/comments/{{ comment.id }}/reposts">
+
+                                Reposts:
+                                {{ comment.reposts|length }}
+
+                            </a>
+
+                            <br><br>
+
+                            {% if comment.id in favorited_comment_ids %}
+
+                                <a href="/comment_unfav/{{ comment.id }}">
+                                    ★ Unfav
+                                </a>
+
+                            {% else %}
+
+                                <a href="/comment_fav/{{ comment.id }}">
+                                    ☆ Fav
+                                </a>
+
+                            {% endif %}
+
+                            <br><br>
+
+                            {% if comment.id in reposted_comment_ids %}
+
+                                <a href="/comments/{{ comment.id }}/unrepost">
+                                    🔁 Unrepost
+                                </a>
+
+                            {% else %}
+
+                                <a href="/comments/{{ comment.id }}/repost">
+                                    🔁 Repost
+                                </a>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>
+                    No posts yet.
+                </p>
+
+            {% endif %}
 
         </div>
 

@@ -5,10 +5,19 @@ from app.models.post import Post
 from app.models.favorite import Favorite
 from app.models.comment import Comment
 from app.models.comment_favorite import CommentFavorite
+from app.models.repost import Repost
 from sqlalchemy.orm import joinedload
 
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+
+
+def normalize_sort_date(created_at):
+
+    if created_at is None:
+        return datetime.min
+
+    return created_at.replace(tzinfo=None)
 
 
 def register_profile_routes(app):
@@ -42,12 +51,95 @@ def register_profile_routes(app):
             Post.created_at.desc()
         ).all()
 
+        reposts = Repost.query.options(
+            joinedload(Repost.post),
+            joinedload(Repost.comment).joinedload(Comment.post)
+        ).filter_by(
+            user_id=user.id
+        ).order_by(
+            Repost.created_at.desc()
+        ).all()
+
+        profile_items = []
+
+        for post in posts:
+
+            profile_items.append({
+                "type": "post",
+                "created_at": post.created_at,
+                "post": post,
+                "comment": None,
+                "repost": None
+            })
+
+        for repost in reposts:
+
+            if repost.post_id is not None and repost.post:
+
+                profile_items.append({
+                    "type": "repost_post",
+                    "created_at": repost.created_at,
+                    "post": repost.post,
+                    "comment": None,
+                    "repost": repost
+                })
+
+            elif repost.comment_id is not None and repost.comment:
+
+                profile_items.append({
+                    "type": "repost_comment",
+                    "created_at": repost.created_at,
+                    "post": repost.comment.post,
+                    "comment": repost.comment,
+                    "repost": repost
+                })
+
+        profile_items = sorted(
+            profile_items,
+            key=lambda item: normalize_sort_date(item["created_at"]),
+            reverse=True
+        )
+
         favorited_post_ids = [
 
             favorite.post_id
 
             for favorite in Favorite.query.filter_by(
                 user_id=session["user_id"]
+            ).all()
+
+        ]
+
+        favorited_comment_ids = [
+
+            favorite.comment_id
+
+            for favorite in CommentFavorite.query.filter_by(
+                user_id=session["user_id"]
+            ).all()
+
+        ]
+
+        reposted_post_ids = [
+
+            repost.post_id
+
+            for repost in Repost.query.filter_by(
+                user_id=session["user_id"]
+            ).filter(
+                Repost.post_id.isnot(None)
+            ).all()
+
+        ]
+
+        reposted_comment_ids = [
+
+            repost.comment_id
+
+            for repost in Repost.query.filter_by(
+                user_id=session["user_id"]
+            ).filter(
+                Repost.comment_id.isnot(None)
             ).all()
 
         ]
@@ -84,9 +176,13 @@ def register_profile_routes(app):
             following_count=following_count,
             is_following=is_following,
             posts=posts,
+            profile_items=profile_items,
             is_owner=is_owner,
             is_online=is_online,
-            favorited_post_ids=favorited_post_ids
+            favorited_post_ids=favorited_post_ids,
+            favorited_comment_ids=favorited_comment_ids,
+            reposted_post_ids=reposted_post_ids,
+            reposted_comment_ids=reposted_comment_ids
         )
 
     @app.route("/profile/<username>/comments")
@@ -195,7 +291,7 @@ def register_profile_routes(app):
 
         unified_favorites = sorted(
             unified_favorites,
-            key=lambda item: item["created_at"],
+            key=lambda item: normalize_sort_date(item["created_at"]),
             reverse=True
         )
 

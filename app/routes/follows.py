@@ -2,6 +2,7 @@ from flask import session, redirect, request
 from app.models.follow import Follow
 from app.models.user import User
 from database import db
+from app.routes.notifications import create_notification, delete_notification
 
 
 def register_follow_routes(app):
@@ -33,6 +34,18 @@ def register_follow_routes(app):
         )
 
         db.session.add(follow)
+
+        current_user = User.query.get(session["user_id"])
+
+        create_notification(
+            user_id=user_to_follow.id,
+            actor_id=session["user_id"],
+            notification_type="follow",
+            target_type="user",
+            target_id=user_to_follow.id,
+            message=f"@{current_user.username} started following you."
+        )
+
         db.session.commit()
 
         return redirect(request.referrer)
@@ -59,6 +72,15 @@ def register_follow_routes(app):
         if follow:
 
             db.session.delete(follow)
+
+            delete_notification(
+                user_id=user_to_unfollow.id,
+                actor_id=session["user_id"],
+                notification_type="follow",
+                target_type="user",
+                target_id=user_to_unfollow.id
+            )
+
             db.session.commit()
 
         return redirect(request.referrer)

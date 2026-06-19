@@ -49,6 +49,10 @@
             margin-bottom: 15px;
         }
 
+        .comment-card:target {
+            background-color: #f0f7ff;
+        }
+
         textarea {
             width: 100%;
         }
@@ -244,7 +248,7 @@
 
             {% for comment in post.comments|reverse %}
 
-                <div class="comment-card">
+                <div class="comment-card" id="comment-{{ comment.id }}">
 
                     <a href="/profile/{{ comment.user.username }}">
 

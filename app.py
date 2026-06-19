@@ -27,6 +27,7 @@ from app.routes.favorites import register_favorite_routes
 from app.routes.comments import register_comment_routes
 from app.routes.comment_favorites import register_comment_favorite_routes
 from app.routes.reposts import register_repost_routes
+from app.routes.notifications import register_notification_routes
 
 register_routes(app)
 register_profile_routes(app)
@@ -38,6 +39,7 @@ register_favorite_routes(app)
 register_comment_routes(app)
 register_comment_favorite_routes(app)
 register_repost_routes(app)
+register_notification_routes(app)
 
 with app.app_context():
 
@@ -49,6 +51,7 @@ with app.app_context():
     from app.models.comment import Comment
     from app.models.comment_favorite import CommentFavorite
     from app.models.repost import Repost
+    from app.models.notification import Notification
 
     db.create_all()
 

@@ -88,6 +88,12 @@
 
     <br><br>
 
+    <a href="/notifications">
+        Notifications ({{ unread_count or 0 }})
+    </a>
+
+    <br><br>
+
     <div class="profile-container">
 
         <div class="profile-sidebar">
@@ -489,7 +495,7 @@
                                     {{ post.content }}
                                 </p>
 
-                                <a href="/posts/{{ post.id }}?next=profile">
+                                <a href="/posts/{{ post.id }}?next=profile#comment-{{ comment.id }}">
                                     Go to original post
                                 </a>
 

@@ -3,6 +3,8 @@ from database import db
 
 from app.models.comment import Comment
 from app.models.comment_favorite import CommentFavorite
+from app.models.user import User
+from app.routes.notifications import create_notification, delete_notification
 
 
 def register_comment_favorite_routes(app):
@@ -32,6 +34,18 @@ def register_comment_favorite_routes(app):
         )
 
         db.session.add(favorite)
+
+        current_user = User.query.get(session["user_id"])
+
+        create_notification(
+            user_id=comment.user_id,
+            actor_id=session["user_id"],
+            notification_type="comment_favorite",
+            target_type="comment",
+            target_id=comment.id,
+            message=f"@{current_user.username} favorited your comment."
+        )
+
         db.session.commit()
 
         return redirect(request.referrer)
@@ -43,6 +57,11 @@ def register_comment_favorite_routes(app):
         if "user_id" not in session:
             return redirect("/login")
 
+        comment = Comment.query.get(comment_id)
+
+        if not comment:
+            return redirect(request.referrer)
+
         favorite = CommentFavorite.query.filter_by(
             user_id=session["user_id"],
             comment_id=comment_id
@@ -51,6 +70,15 @@ def register_comment_favorite_routes(app):
         if favorite:
 
             db.session.delete(favorite)
+
+            delete_notification(
+                user_id=comment.user_id,
+                actor_id=session["user_id"],
+                notification_type="comment_favorite",
+                target_type="comment",
+                target_id=comment.id
+            )
+
             db.session.commit()
 
         return redirect(request.referrer)

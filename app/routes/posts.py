@@ -3,6 +3,7 @@ from app.models.post import Post
 from app.models.user import User
 from app.models.comment import Comment
 from app.models.repost import Repost
+from app.models.notification import Notification
 from database import db
 
 
@@ -29,6 +30,7 @@ def register_post_routes(app):
 
         return redirect(request.referrer)
 
+
     @app.route("/delete_post/<int:post_id>")
     def delete_post(post_id):
 
@@ -43,10 +45,33 @@ def register_post_routes(app):
         if post.user_id != session["user_id"]:
             return redirect(request.referrer)
 
+        comments = Comment.query.filter_by(
+            post_id=post.id
+        ).all()
+
+        for comment in comments:
+
+            comment_notifications = Notification.query.filter_by(
+                target_type="comment",
+                target_id=comment.id
+            ).all()
+
+            for notification in comment_notifications:
+                db.session.delete(notification)
+
+        post_notifications = Notification.query.filter_by(
+            target_type="post",
+            target_id=post.id
+        ).all()
+
+        for notification in post_notifications:
+            db.session.delete(notification)
+
         db.session.delete(post)
         db.session.commit()
 
         return redirect(request.referrer)
+
 
     @app.route("/posts/<int:post_id>")
     def view_post(post_id):

@@ -2,6 +2,8 @@ from flask import request, session, redirect, render_template
 from app.models.comment import Comment
 from app.models.post import Post
 from app.models.user import User
+from app.models.notification import Notification
+from app.routes.notifications import create_notification
 from database import db
 
 
@@ -30,9 +32,23 @@ def register_comment_routes(app):
         )
 
         db.session.add(comment)
+
+        db.session.flush()
+
+        current_user = User.query.get(session["user_id"])
+
+        create_notification(
+            user_id=post.user_id,
+            actor_id=session["user_id"],
+            notification_type="comment",
+            target_type="comment",
+            target_id=comment.id,
+            message=f"@{current_user.username} commented on your post."
+        )
+
         db.session.commit()
 
-        return redirect(f"/posts/{post_id}")
+        return redirect(f"/posts/{post_id}#comment-{comment.id}")
 
 
     @app.route("/comments/<int:comment_id>")
@@ -91,6 +107,14 @@ def register_comment_routes(app):
             return redirect(request.referrer)
 
         post_id = comment.post_id
+
+        related_notifications = Notification.query.filter_by(
+            target_type="comment",
+            target_id=comment.id
+        ).all()
+
+        for notification in related_notifications:
+            db.session.delete(notification)
 
         db.session.delete(comment)
         db.session.commit()

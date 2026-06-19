@@ -67,6 +67,12 @@
         Back to Feed
     </a>
 
+    <br><br>
+
+    <a href="/notifications">
+        Notifications ({{ unread_count or 0 }})
+    </a>
+
     <hr>
 
     <div class="discover-container">
@@ -340,7 +346,7 @@
                                     {{ post.content }}
                                 </p>
 
-                                <a href="/posts/{{ post.id }}?next=discover">
+                                <a href="/posts/{{ post.id }}?next=discover#comment-{{ comment.id }}">
                                     Go to original post
                                 </a>
 

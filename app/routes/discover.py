@@ -9,6 +9,7 @@ from app.models.favorite import Favorite
 from app.models.comment_favorite import CommentFavorite
 from app.models.comment import Comment
 from app.models.repost import Repost
+from app.routes.notifications import get_unread_notification_count
 
 from datetime import datetime
 
@@ -32,6 +33,10 @@ def register_discover_routes(app):
         current_user_id = session["user_id"]
 
         current_user = User.query.get(
+            current_user_id
+        )
+
+        unread_count = get_unread_notification_count(
             current_user_id
         )
 
@@ -161,5 +166,6 @@ def register_discover_routes(app):
             favorited_post_ids=favorited_post_ids,
             favorited_comment_ids=favorited_comment_ids,
             reposted_post_ids=reposted_post_ids,
-            reposted_comment_ids=reposted_comment_ids
+            reposted_comment_ids=reposted_comment_ids,
+            unread_count=unread_count
         )

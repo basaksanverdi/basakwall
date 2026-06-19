@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        Notifications
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .notification-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .unread {
+            background-color: #f0f7ff;
+        }
+
+        .notification-message {
+            color: black;
+            text-decoration: none;
+        }
+
+        .notification-message:hover {
+            text-decoration: underline;
+        }
+
+        .notification-date {
+            margin-top: 10px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .new-label {
+            color: #007bff;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>
+        Notifications ({{ unread_count or 0 }})
+    </h1>
+
+    <a href="/feed">
+        Back to Feed
+    </a>
+
+    {% if notifications %}
+
+        <br><br>
+
+        <a href="/notifications/read-all">
+            Mark All as Read
+        </a>
+
+    {% endif %}
+
+    <br><br>
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+            <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+
+                {% if not notification.is_read %}
+
+                    <div class="new-label">
+                        New
+                    </div>
+
+                    <br>
+
+                {% endif %}
+
+                <a class="notification-message" href="/notifications/{{ notification.id }}/open">
+                    {{ notification.message }}
+                </a>
+
+                <div class="notification-date">
+                    {{ notification.created_at.strftime("%d.%m.%Y %H:%M") }}
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        No notifications yet.
+
+    {% endif %}
+
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-from flask import render_template, session
+from flask import render_template, session, redirect
 from app.models.user import User
 from app.models.follow import Follow
 from app.models.post import Post
@@ -6,6 +6,7 @@ from app.models.favorite import Favorite
 from app.models.comment import Comment
 from app.models.comment_favorite import CommentFavorite
 from app.models.repost import Repost
+from app.routes.notifications import get_unread_notification_count
 from sqlalchemy.orm import joinedload
 
 from datetime import datetime, timedelta
@@ -25,12 +26,19 @@ def register_profile_routes(app):
     @app.route("/profile/<username>")
     def user_profile(username):
 
+        if "user_id" not in session:
+            return redirect("/login")
+
         user = User.query.filter_by(
             username=username
         ).first()
 
         if not user:
             return "User not found"
+
+        unread_count = get_unread_notification_count(
+            session["user_id"]
+        )
 
         follower_count = Follow.query.filter_by(
             following_id=user.id
@@ -166,8 +174,6 @@ def register_profile_routes(app):
 
                 is_online = True
 
-        print(session)
-
         return render_template(
             "profile.html",
             user=user,
@@ -182,11 +188,16 @@ def register_profile_routes(app):
             favorited_post_ids=favorited_post_ids,
             favorited_comment_ids=favorited_comment_ids,
             reposted_post_ids=reposted_post_ids,
-            reposted_comment_ids=reposted_comment_ids
+            reposted_comment_ids=reposted_comment_ids,
+            unread_count=unread_count
         )
+
 
     @app.route("/profile/<username>/comments")
     def profile_comments(username):
+
+        if "user_id" not in session:
+            return redirect("/login")
 
         user = User.query.filter_by(
             username=username
@@ -209,8 +220,12 @@ def register_profile_routes(app):
             comments=comments
         )
 
+
     @app.route("/profile/<username>/followers")
     def followers(username):
+
+        if "user_id" not in session:
+            return redirect("/login")
 
         user = User.query.filter_by(
             username=username
@@ -231,8 +246,12 @@ def register_profile_routes(app):
             followers=followers
         )
 
+
     @app.route("/profile/<username>/following")
     def following(username):
+
+        if "user_id" not in session:
+            return redirect("/login")
 
         user = User.query.filter_by(
             username=username
@@ -253,8 +272,12 @@ def register_profile_routes(app):
             following=following
         )
 
+
     @app.route("/profile/<username>/favorites")
     def user_favorites(username):
+
+        if "user_id" not in session:
+            return redirect("/login")
 
         user = User.query.filter_by(
             username=username
